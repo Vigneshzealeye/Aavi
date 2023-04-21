@@ -40,16 +40,22 @@ exports.userSignup=async(req,res)=>{
         var{email,password}=req.body
 
         var user=await Users.findOne({email:email})
+        
 
-        var valid=bcrypt.compare(password,user.password)
+        var valid=await bcrypt.compare(password,user.password)
+       
         if(!valid)
         {
             res.status(400).json("Wrong Password")
+            return
         }
+        else{
 
-        var token=jwt.sign({name:user.name},"vignesh",{expiresIn:"10mins"})
+            var token=jwt.sign({name:user.name},"vignesh",{expiresIn:"10mins"})
 
         res.status(200).json(`Verification Success your jwt ${token}`)
+        }
+        
 
 
 
