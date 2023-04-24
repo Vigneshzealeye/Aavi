@@ -4,6 +4,8 @@ const app=exp()
 
 app.use(exp.json())
 
+require('dotenv').config();
+
 const mongoose=require("mongoose")
 
 mongoose.connect("mongodb://127.0.0.1:27017/aawi").then(()=>{
@@ -12,4 +14,7 @@ mongoose.connect("mongodb://127.0.0.1:27017/aawi").then(()=>{
     console.log(err)
 })
 require("./routes/authroutes")(app)
-app.listen(8000,()=>{console.log("app running at 8000")})
+require("./routes/deviceroutes")(app)
+
+let port=process.env.PORT
+app.listen(port,()=>{console.log(`app running at ${port}`)})

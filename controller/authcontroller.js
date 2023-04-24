@@ -51,7 +51,7 @@ exports.userSignup=async(req,res)=>{
         }
         else{
 
-            var token=jwt.sign({name:user.name},"vignesh",{expiresIn:"10mins"})
+            var token=jwt.sign({id:user._id},process.env.SECRET_KEY,{expiresIn:"30mins"})
 
         res.status(200).json(`Verification Success your jwt ${token}`)
         }

@@ -11,7 +11,13 @@ try{
       otp: {
         code: { type: String, default: null },
         expiry: { type: Date, default: null },
-      }
+      },
+      saveList: {
+
+        device:[{type: mongoose.Schema.Types.ObjectId, ref:"Devices"}]
+
+      },
+
       
     
       
