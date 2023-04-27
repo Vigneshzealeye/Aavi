@@ -15,6 +15,8 @@ mongoose.connect("mongodb://127.0.0.1:27017/aawi").then(()=>{
 })
 require("./routes/authroutes")(app)
 require("./routes/deviceroutes")(app)
+require("./routes/roomroutes")(app)
+require("./routes/applianceroutes")(app)
 
 let port=process.env.PORT
 app.listen(port,()=>{console.log(`app running at ${port}`)})

@@ -1,18 +1,20 @@
 const Users = require("../model/User");
 const Devices = require("../model/Device");
-
+const Appliance=require("../model/Appliances")
 exports.setupdevice = async (req, res) => {
   try {
     var id = req.uid;
 
     var user = await Users.findOne({ _id: id });
 
-    var { device_name, device_id } = req.body;
+    var {device_id} = req.body;
+
     let new_device = {
       createdAt: new Date(),
-      device_name,
-      device_id,
-      device_owner: user,
+      
+      device_id:device_id,
+      
+      device_owner: user._id
     };
 
     let newdevice = await new Devices(new_device).save();
@@ -31,42 +33,72 @@ exports.getAlldevicesofUser = async (req, res) => {
 
     res.status(200).json(devices);
   } catch (error) {
-    res.status(500).json({message:error||"Something went wrong"});
+    res.status(500).json({ message: error || "Something went wrong" });
   }
 };
 
-exports.editDevicename=async(req,res)=>{
-    try{
+// exports.editDevicename = async (req, res) => {
+//   try {
+//     let id = req.uid;
+//     let {  newName ,device_id } = req.body;
+//       await Devices.updateOne(
+//       { device_owner: id, device_id},
+//        {$set:{device_name:newName}}
+//     );
+    
+//     res.status(200).json("Edit Success");
+//   } catch (err) {
+//     console.log(err)
+//     res.status(500).json({ message: err || "Something went wrong" });
+//   }
+// };
 
-        let id = req.uid;
-        let {oldName,newName}=req.body
+exports.deleteDevice = async (req, res) => {
+  try {
+    let id = req.uid;
+    let { device_id} = req.body;
+    let devices = await Devices.deleteMany({
+      device_owner: id,
+      
+      device_id:device_id
+    });
 
-    let devices = await Devices.updateMany({ device_owner: id ,device_name:oldName},{$set:{device_name:newName}})
-    res.status(200).json("Edit Success")
+    res.status(200).json("Delete Success");
+  } catch (error) {
+    res.status(500).json({ message: err || "Something went wrong" });
+  }
+};
 
-    }
-    catch(err)
-    {
-        res.status(500).json({message:err||"Something went wrong"});
-    }
-}
+exports.allapplianceindevice=async(req,res)=>{
 
-exports.deleteDevice=async(req,res)=>{
-    try {
-        let id = req.uid;
-        let{Name}=req.body
-        let devices = await Devices.deleteMany({ device_owner: id ,device_name:Name})
+  try{
 
-        res.status(200).json("Delete Success")
+    var {device_id}=req.body
+
+    var device=await Devices.findOne({device_id:device_id})
+
+    var{appliances}=device
+
+    var op=[]
+    appliances.forEach((e)=>{
+      op.push(e.appliance_id)
+    })
+    
+
+    var allAppliances=await Appliance.find({_id:op})
+
+    //console.log(allAppliances)
+    res.status(200).json(allAppliances)
+  
+  }
 
 
+  catch(error)
+  {
+    console.log(error)
+    res.status(400).json("something went wrong")
+
+  }
 
 
-
-    } catch (error) {
-
-        
-        res.status(500).json({message:err||"Something went wrong"});
-        
-    }
 }

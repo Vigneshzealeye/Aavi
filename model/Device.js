@@ -1,22 +1,22 @@
-const mongoose=require("mongoose")
-var devices
-try{
-   devices = new mongoose.Schema({
+const mongoose = require("mongoose");
+var devices;
+try {
+  devices = new mongoose.Schema({
+    createdAt: { type: Date, default: Date.now },
 
-        createdAt: { type: Date, default: Date.now },
-      device_name: { type: String, required: true },
-      device_id:{type:String,required:true},
-      device_owner:{type: mongoose.Schema.Types.ObjectId, ref:"Users"}
-      
-     
-      
+    device_id: { type: String, required: true, unique: true },
     
-      
-    });
-}
-catch(err)
-{
-    console.log(err)
+    device_owner: { type: mongoose.Schema.Types.ObjectId, ref: "Users" },
+    isAssigned: { type: Boolean, default: false },
+
+    appliances: [
+      {
+        appliance_id: { type: mongoose.Schema.Types.ObjectId, ref: "Appliances" }
+      },
+    ],
+  });
+} catch (err) {
+  console.log(err);
 }
 
-module.exports=mongoose.model("Devices",devices)
+module.exports = mongoose.model("Devices", devices);
