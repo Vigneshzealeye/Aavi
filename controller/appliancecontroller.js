@@ -12,7 +12,7 @@ exports.createappliance=async(req,res)=>{
         }
         var appliance= await new Appliance(newAppliance).save()
 
-        await Device.updateOne({device_id:device_id},{$push:{appliances:{appliance_id:appliance}}})
+        await Device.updateOne({device_id:device_id},{$push:{appliances:appliance._id}})
 
         res.status(200).json(appliance)
 
@@ -40,6 +40,30 @@ exports.editappliancename=async(req,res)=>{
         console.log(error)
         res.status(500).json({message:"Something Went Wrong"})
 
+    }
+
+
+}
+
+exports.deleteAppliance=async(req,res)=>{
+
+    try{
+
+        var {id}=req.body
+
+        await Appliance.deleteOne({_id:id})
+
+        //await Device.updateOne({"appliances.appliance_id":id},{$pull:{appliances:{appliance_id:id}}})
+
+        res.status(200).json("Deletion Success")
+
+
+
+    }
+    catch(error)
+    {
+        console.log(error)
+        res.status(500).json("Something Went Wrong")
     }
 
 

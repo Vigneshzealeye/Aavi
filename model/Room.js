@@ -6,12 +6,7 @@ try {
     room_name: { type: String, required: true ,unique:true},
     
     devices: [
-    {
-      device:{ type: mongoose.Schema.Types.ObjectId, ref: "Devices" },
-      device_id:{type:String,required:true}
-
-    }
-        
+    { type: mongoose.Schema.Types.ObjectId, ref: "Devices" }
     ],
 
     room_owner: { type: mongoose.Schema.Types.ObjectId, ref: "Users" },

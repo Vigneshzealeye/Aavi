@@ -76,19 +76,13 @@ exports.allapplianceindevice=async(req,res)=>{
     var {device_id}=req.body
 
     var device=await Devices.findOne({device_id:device_id})
+    
+      var {appliances} =await device.populate("appliances")
 
-    var{appliances}=device
-
-    var op=[]
-    appliances.forEach((e)=>{
-      op.push(e.appliance_id)
-    })
     
 
-    var allAppliances=await Appliance.find({_id:op})
-
-    //console.log(allAppliances)
-    res.status(200).json(allAppliances)
+    console.log(appliances)
+    res.status(200).json("success")
   
   }
 

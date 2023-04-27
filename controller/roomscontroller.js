@@ -10,7 +10,7 @@ exports.getroomdetails = async (req, res) => {
 
     var room = await Rooms.find({ room_owner: id, room_name: room_name });
 
-    // console.log(room)
+     //console.log(room)
 
     res.status(200).json(room);
   } catch (error) {
@@ -136,27 +136,20 @@ exports.allappliancesinroom = async (req, res) => {
     var { room_name } = req.body;
 
     var room = await Rooms.findOne({ room_owner: id, room_name: room_name });
-
-    var { devices } = room;
+    
+    var {devices}=await room.populate("devices")
     var deviceId = [];
     devices.forEach((e) => {
       deviceId.push(e.device_id);
     });
+    
+    var device=await Device.findOne({device_id:deviceId})
+    var {appliances}=await device.populate("appliances")
+    
+    
 
-    var allappliance = await Device.find({ device_id: deviceId });
-    var allAppliances = [];
-    allappliance.forEach((e) => {
-      allAppliances.push([...e.appliances]);
-    });
-    var op = allAppliances.flat(1);
-
-    var allAppId = [];
-    op.forEach((e) => {
-      allAppId.push(e.appliance_id); 
-    });
-    var op2 = await Appliance.find({ _id: allAppId });
-    console.log(op2);
-    res.status(200).json("Success");
+    console.log(appliances);
+    res.status(200).json(appliances);
   } catch (error) {
     console.log(error);
     res.status(400).json({ message: "Some thing went Wrong" });

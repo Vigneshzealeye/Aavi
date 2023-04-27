@@ -10,9 +10,9 @@ try {
     isAssigned: { type: Boolean, default: false },
 
     appliances: [
-      {
-        appliance_id: { type: mongoose.Schema.Types.ObjectId, ref: "Appliances" }
-      },
+      
+         { type: mongoose.Schema.Types.ObjectId, ref: "Appliances"}
+      
     ],
   });
 } catch (err) {
