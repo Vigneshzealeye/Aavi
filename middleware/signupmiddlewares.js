@@ -8,23 +8,25 @@ try{
 
     if(Object.keys(req.body).length===0)
     {
-        res.status(400).json("Name or Mobile Number or Email or Password is Missing")
+        res.status(400).json(
+            {message:"Name or Mobile Number or Email or Password is Missing"}
+            )
     }
     else if(!name)
     {
-        res.status(400).json("Name Must Be Provided")
+        res.status(400).json({message:"Name Must Be Provided"})
     }
     else if(!mobile)
     {
-        res.status(400).json("Mobile Number Is Missing")
+        res.status(400).json({message:"Mobile Number Is Missing"})
     }
     else if(!email)
     {
-        res.status(400).json("Email Must Be Provided")
+        res.status(400).json({message:"Email Must Be Provided"})
     }
     else if(!password)
     {
-        res.status(400).json("Password Number Is Missing")
+        res.status(400).json({message:"Password Is Missing"})
     }
     else {
         next()
@@ -47,15 +49,15 @@ const signinvalidator=async(req,res,next)=>{
 
         if(Object.keys(req.body).length===0)
     {
-        res.status(400).json("Email or Password is Missing")
+        res.status(400).json({Message:"Email or Password is Missing"})
     }
     else if(!email)
     {
-        res.status(400).json("Email Must Be Provided")
+        res.status(400).json({Message:"Email Must Be Provided"})
     }
     else if(!password)
     {
-        res.status(400).json("Password Number Is Missing")
+        res.status(400).json({Message:"Password Is Missing"})
     }
     else {
         next()
@@ -65,7 +67,7 @@ const signinvalidator=async(req,res,next)=>{
 
 
     } catch (error) {
-        res.status(500).json("Something Went Wrong")
+        res.status(500).json({Message:"Something Went Wrong"})
     }
 
 }

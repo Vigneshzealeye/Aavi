@@ -1,9 +1,22 @@
-var authcontroller=require("../controller/authcontroller")
-var authmiddleware=require("../middleware/signupmiddlewares")
+var authcontroller = require("../controller/authcontroller");
+var signmiddleware = require("../middleware/signupmiddlewares");
 
+module.exports = (app) => {
+  try{
 
-module.exports=(app)=>{
-    app.post("/create_user",authmiddleware.signupcheck,authcontroller.createUser);
-    app.post("/user_login",authmiddleware.signinvalidator,authcontroller.userSignup)
-    
-}
+  
+  app.post(
+    "/api/auth/createuser",
+    signmiddleware.signupcheck,
+    authcontroller.createUser
+  );
+  app.post(
+    "/api/auth/user_login",
+    signmiddleware.signinvalidator,
+    authcontroller.userSignup
+  );}
+  catch(err)
+  {
+    console.log(err)
+  }
+};

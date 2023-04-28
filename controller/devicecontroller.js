@@ -1,20 +1,20 @@
 const Users = require("../model/User");
 const Devices = require("../model/Device");
-const Appliance=require("../model/Appliances")
+const Appliance = require("../model/Appliances");
 exports.setupdevice = async (req, res) => {
   try {
     var id = req.uid;
 
     var user = await Users.findOne({ _id: id });
 
-    var {device_id} = req.body;
+    var { device_id } = req.body;
 
     let new_device = {
       createdAt: new Date(),
-      
-      device_id:device_id,
-      
-      device_owner: user._id
+
+      device_id: device_id,
+
+      device_owner: user._id,
     };
 
     let newdevice = await new Devices(new_device).save();
@@ -45,7 +45,7 @@ exports.getAlldevicesofUser = async (req, res) => {
 //       { device_owner: id, device_id},
 //        {$set:{device_name:newName}}
 //     );
-    
+
 //     res.status(200).json("Edit Success");
 //   } catch (err) {
 //     console.log(err)
@@ -56,11 +56,11 @@ exports.getAlldevicesofUser = async (req, res) => {
 exports.deleteDevice = async (req, res) => {
   try {
     let id = req.uid;
-    let { device_id} = req.body;
+    let { device_id } = req.body;
     let devices = await Devices.deleteMany({
       device_owner: id,
-      
-      device_id:device_id
+
+      device_id: device_id,
     });
 
     res.status(200).json("Delete Success");
@@ -69,30 +69,18 @@ exports.deleteDevice = async (req, res) => {
   }
 };
 
-exports.allapplianceindevice=async(req,res)=>{
+exports.allapplianceindevice = async (req, res) => {
+  try {
+    var { device_id } = req.body;
 
-  try{
+    var device = await Devices.findOne({ device_id: device_id });
 
-    var {device_id}=req.body
+    var { appliances } = await device.populate("appliances");
 
-    var device=await Devices.findOne({device_id:device_id})
-    
-      var {appliances} =await device.populate("appliances")
-
-    
-
-    console.log(appliances)
-    res.status(200).json("success")
-  
+    console.log(appliances);
+    res.status(200).json("success");
+  } catch (error) {
+    console.log(error);
+    res.status(400).json("something went wrong");
   }
-
-
-  catch(error)
-  {
-    console.log(error)
-    res.status(400).json("something went wrong")
-
-  }
-
-
-}
+};
