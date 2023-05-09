@@ -1,14 +1,14 @@
 const exp=require("express")
-
+const cors=require("cors")
 const app=exp()
 
 app.use(exp.json())
-
+app.use(cors())
 require('dotenv').config();
 
 const mongoose=require("mongoose")
 
-mongoose.connect("mongodb://127.0.0.1:27017/aawi").then(()=>{
+mongoose.connect("mongodb://127.0.0.1:27017/TwinV").then(()=>{
     console.log("DB Connected")
 }).catch((err)=>{
     console.log(err)

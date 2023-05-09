@@ -12,16 +12,21 @@ const appliancemiddleware = async (req, res, next) => {
     } else if (!device_id) {
       res.status(400).json({ mesage: "Device Id Missing" });
     } else {
-      var nodes = device_id[0];
-      var device = await Device.findOne({ device_id: device_id });
+      var nodes = device_id.split("-")[1]  //TH-Nx[D]-v5.0-YYYYMM-0000
+      var nodelength=nodes[1]
+      var dimmer=nodes.length==3?true:false
+      var device = await Device.findOne({ device_id: device_id });  
+      req.dimmer=dimmer
       console.log(device.appliances.length);
-      if (device.appliances.length >= nodes) {
+      if (device.appliances.length >= nodelength) {
         res.status(400).json("No Free Node Available on Device");
       } else {
         next();
       }
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log("Middleware"+error)
+  }
 };
 
 module.exports = {

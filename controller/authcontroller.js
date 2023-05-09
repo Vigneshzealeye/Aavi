@@ -40,6 +40,7 @@ exports.createUser = async (req, res) => {
 exports.userSignup = async (req, res) => {
   try {
     var { email, password } = req.body;
+    console.log(password)
     
     var user = await Users.findOne({ email: email });
 
@@ -49,8 +50,8 @@ exports.userSignup = async (req, res) => {
       res.status(400).json({message:"Wrong Password"});
       return;
     } else {
-      var token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
-        expiresIn: "30Days",
+      var token = jwt.sign({ email: user.email }, process.env.SECRET_KEY, {
+        expiresIn: "30d",
       });
 
       res.status(200).json({
@@ -61,7 +62,7 @@ exports.userSignup = async (req, res) => {
       });
     }
   } catch (err) {
-    console.log(err)
+    console.log("user"+err)
     res.status(500).json({message:"something went wrong"});
   }
 };

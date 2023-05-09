@@ -4,9 +4,9 @@ try {
   devices = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now },
 
-    device_id: { type: String, required: true, unique: true },
+    device_id: { type: String, required: true},
     
-    device_owner: { type: mongoose.Schema.Types.ObjectId, ref: "Users" },
+    device_owner: { type: String, required:true ,default:"null"},
     isAssigned: { type: Boolean, default: false },
 
     appliances: [
