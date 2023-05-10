@@ -7,7 +7,7 @@ try {
 
     devices: [{ type: mongoose.Schema.Types.ObjectId, ref: "Devices" }],
 
-    room_owner: { type: mongoose.Schema.Types.ObjectId, ref: "Users" },
+    room_owner: { type: String, required:true,ref: "Users" },
   });
 } catch (err) {
   console.log(err);

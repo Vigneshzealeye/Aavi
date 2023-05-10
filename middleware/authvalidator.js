@@ -20,6 +20,7 @@ const tokenvalidator = async (req, res, next) => {
 
     try {
       req.email = email;
+      
       next();
     } catch (error) {
       res.status(500).json({message:"something went wrong "});

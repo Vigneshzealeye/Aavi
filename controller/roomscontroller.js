@@ -5,11 +5,11 @@ let Appliance = require("../model/Appliances");
 
 exports.getroomdetails = async (req, res) => {
   try {
-    var id = req.uid;
+    var email = req.email;
     var { room_name } = req.body;
 
-    var room = await Rooms.find({ room_owner: id, room_name: room_name });
-
+    var room = await Rooms.findOne({ room_owner: email, room_name: room_name });
+          await room.populate("devices")
      //console.log(room)
 
     res.status(200).json(room);
@@ -22,26 +22,14 @@ exports.getroomdetails = async (req, res) => {
 exports.createroom = async (req, res) => {
   try {
     var { room_name } = req.body;
-    var { _devices } = req.body;
-    var dev = [...req.dev];
-
-    //console.log(dev);
-
-    var id = req.uid;
-
+    var email = req.email;
     var newroom = {
       room_name: room_name,
-      devices: dev,
-      room_owner: id,
+      
+      room_owner: email,
     };
 
     var room = await Rooms(newroom).save();
-
-    await Device.updateMany(
-      { device_id: _devices },
-      { $set: { isAssigned: true } }
-    );
-
     res.status(200).json(room);
   } catch (error) {
     console.log(error);
@@ -51,65 +39,74 @@ exports.createroom = async (req, res) => {
 
 exports.addroomdevice = async (req, res) => {
   try {
-    var { room_name } = req.body;
+    var { room_name,_device} = req.body;
+    
 
-    var id = req.uid;
-    var dev = [...req.dev];
+    var email = req.email;
+    var dev=await Device.findOne({device_id:_device})
+    
     await Rooms.updateOne(
-      { room_name: room_name, room_owner: id },
-      { $push: { devices: dev } }
-    );
+      { room_name: room_name, room_owner: email },
+      { $push: { devices: dev._id } }
+    );  
+    await Device.updateOne({device_id:_device},{$set:{isAssigned:true}})
 
-    res.status(200).json("Devices Added Successfully");
+    res.status(200).json({message:"Devices Added Successfully"} );
   } catch (error) {
     console.log(error);
-    res.status(500).json("Something went wrong ");
+    res.status(500).json({message:"Something went wrong "});
   }
 };
 
-exports.editroomdevice = async (req, res) => {
-  try {
-    var { room_name } = req.body;
-    var { old_id, new_id } = req.body;
-    var id = req.uid;
-    await Rooms.updateOne(
-      { room_name: room_name, room_owner: id },
-      { $pull: { devices: { device_id: old_id } } }
-    );
-    await Rooms.updateOne(
-      { room_name: room_name, room_owner: id },
-      { $push: { devices: { device_id: new_id } } }
-    );
-    res.status(200).json("Devices Added Successfully");
-  } catch (error) {
-    console.log(error);
-    res.status(500).json("Something went wrong ");
-  }
-};
+// exports.editroomdevice = async (req, res) => {
+//   try {
+//     var { room_name } = req.body;
+//     var { old_id, new_id } = req.body;
+//     var email = req.email;
+//     var devOld=await Device.findOne({device_id:old_id})
+//     var devNew=await Device.findOne({device_id:new_id,device_owner:email})
+//     if(!devNew)
+//     {
+//       res.status(400).json({message:`${new_id} Doesn't Exist or Not Assiged to User`})
+//     }
+//     else{
+//       await Rooms.updateOne(
+//         { room_name: room_name, room_owner: email },
+//         { $pull: { devices: { device_id: devOld._id } } }
+//       );
+//       await Rooms.updateOne(
+//         { room_name: room_name, room_owner: id },
+//         { $push: { devices: { device_id: devNew._id } } }
+//       );
+//       res.status(200).json({message:"Devices Added Successfully"});
+
+//     }
+    
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json("Something went wrong ");
+//   }
+// };
 
 exports.deleteroom = async (req, res) => {
   try {
-    var id = req.uid;
+    var email = req.email;
     var { room_name } = req.body;
-    var devices = [];
-    var roomdevice = await Rooms.find({ room_owner: id, room_name: room_name });
-
-    roomdevice.forEach((e) => {
-      e.devices.forEach((e1) => {
-        devices.push(e1.device_id);
-      });
-    });
+    
+    var roomdevice = await Rooms.findOne({ room_owner: email, room_name: room_name });
+    
+    
 
     await Device.updateMany(
-      { device_id: devices },
+      { _id: roomdevice.devices },
       { $set: { isAssigned: false } }
-    );
+    ); 
 
-    console.log(devices);
+    
 
-    await Rooms.deleteOne({ room_owner: id, room_name: room_name });
+    await Rooms.deleteOne({ room_owner: email, room_name: room_name });
 
-    res.status(200).json("Deletion Success");
+    res.status(200).json({Message:"Deletion Success"});
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error || "something went wrong" });
@@ -118,24 +115,30 @@ exports.deleteroom = async (req, res) => {
 
 exports.editroom = async (req, res) => {
   try {
-    var id = req.uid;
+    var email = req.email;
     var { room_name, new_room_name } = req.body;
+    console.log( room_name, new_room_name)
+    console.log(email)
+    var op=
     await Rooms.updateOne(
-      { room_owner: id, room_name: room_name },
+      { room_owner: email, room_name: room_name },
       { $set: { room_name: new_room_name } }
     );
+ 
+  
+      console.log(op)
 
-    res.status(200).json("Edit Success");
+    res.status(200).json({message:"Edit Success"});
   } catch (error) {
     res.status(500).json({ message: error || "something went wrong" });
   }
 };
 exports.allappliancesinroom = async (req, res) => {
   try {
-    var id = req.uid;
+    var email = req.email;
     var { room_name } = req.body;
 
-    var room = await Rooms.findOne({ room_owner: id, room_name: room_name });
+    var room = await Rooms.findOne({ room_owner: email, room_name: room_name });
     
     var {devices}=await room.populate("devices")
     var deviceId = [];
